@@ -46,15 +46,27 @@ class MyApp extends StatelessWidget {
 
 class MyAppState extends ChangeNotifier {
   var current = WordPair.random();
+  var history = <WordPair>[];
 
   void getNext() {
     current = WordPair.random();
+    addCurrentToHistory();
+    notifyListeners();
+  }
+
+  void addCurrentToHistory() {
+    history.add(current);
+  }
+
+  void removeFavourite(WordPair wordPair) {
+    favorites.remove(wordPair);
     notifyListeners();
   }
 
   var favorites = <WordPair>[];
 
-  void toggleFavorite() {
+  void toggleFavorite([WordPair? current]) {
+    current = current ?? this.current;
     if (favorites.contains(current)) {
       favorites.remove(current);
     } else {
@@ -90,41 +102,54 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text('Flutter'),
-          ),
-          body: Row(
-            children: [
-              SafeArea(
-                child: NavigationRail(
-                  backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                  extended: constraints.maxWidth >= 600,
-                  destinations: [
-                    NavigationRailDestination(
-                      icon: Icon(Icons.home),
-                      label: Text('Home'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.favorite),
-                      label: Text('Favorites'),
-                    ),
-                  ],
-                  selectedIndex: selectedIndex,
-                  onDestinationSelected: (value) {
-                    setState(() {
-                      selectedIndex = value;
-                    });
-                  },
+        return WillPopScope(
+          onWillPop: () async {
+            if(selectedIndex == 1) {
+              setState(() {
+                selectedIndex = 0;
+              });
+              return false;
+            }
+            else {
+              return true;
+            }
+          },
+          child: Scaffold(
+            appBar: AppBar(
+              title: Text('Flutter'),
+            ),
+            body: Row(
+              children: [
+                SafeArea(
+                  child: NavigationRail(
+                    backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                    extended: constraints.maxWidth >= 600,
+                    destinations: [
+                      NavigationRailDestination(
+                        icon: Icon(Icons.home),
+                        label: Text('Home'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.favorite),
+                        label: Text('Favorites'),
+                      ),
+                    ],
+                    selectedIndex: selectedIndex,
+                    onDestinationSelected: (value) {
+                      setState(() {
+                        selectedIndex = value;
+                      });
+                    },
+                  ),
                 ),
-              ),
-              Expanded(
-                child: Container(
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                  child: page,
+                Expanded(
+                  child: Container(
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    child: page,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       }
@@ -149,6 +174,16 @@ class GeneratorPage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          for (var element in appState.history)
+            ListTile(
+              leading: appState.favorites.contains(element) ? Icon(Icons.favorite) : SizedBox(),
+              iconColor: Theme.of(context).primaryColor,
+              title: Text(element.asPascalCase),
+              textColor: Colors.teal,
+              onTap: (){
+                appState.toggleFavorite(element);
+              },
+            ),
           BigCard(pair: pair),
           SizedBox(height: 10),
           Row(
@@ -159,13 +194,13 @@ class GeneratorPage extends StatelessWidget {
                     appState.toggleFavorite();
                   },
                   icon: Icon(icon),
-                  label: Text('like')),
+                  label: Text('Like')),
               SizedBox(width: 10),
               ElevatedButton(
                   onPressed: () {
                     appState.getNext();
                   },
-                  child: Text('next')),
+                  child: Text('Next')),
             ],
           )
         ],
@@ -182,7 +217,7 @@ class FavouritesPage extends StatelessWidget {
 
     if (pair.isEmpty) {
       return Center(
-        child: Text('No favorites yet'),
+        child: Text('No favorites yet', style: Theme.of(context).textTheme.displaySmall?.copyWith(color: Colors.white)),
       );
     }
 
@@ -201,6 +236,9 @@ class FavouritesPage extends StatelessWidget {
               iconColor: Theme.of(context).primaryColor,
               title: Text(element.asPascalCase),
               textColor: Colors.teal,
+              onTap: (){
+                appState.removeFavourite(element);
+              },
             )
         ],
       )
