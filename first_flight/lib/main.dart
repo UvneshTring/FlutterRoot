@@ -316,10 +316,13 @@ class BigCard extends StatelessWidget {
       elevation: 5,
       child: Padding(
         padding: const EdgeInsets.all(20.0),
-        child: Text(
-          pair.asLowerCase,
-          style: style,
-          semanticsLabel: pair.asPascalCase, // For Accessibility - https://codelabs.developers.google.com/codelabs/flutter-codelab-first#4:~:text=visually%20impaired%20users.-,However,-%2C%20you%20might%20want
+        child: AnimatedSize(
+          duration: Duration(milliseconds: 200),
+          child: Text(
+            pair.asLowerCase,
+            style: style,
+            semanticsLabel: pair.asPascalCase, // For Accessibility - https://codelabs.developers.google.com/codelabs/flutter-codelab-first#4:~:text=visually%20impaired%20users.-,However,-%2C%20you%20might%20want
+          ),
         ),
       ),
     );
