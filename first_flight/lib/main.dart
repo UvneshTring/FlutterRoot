@@ -178,6 +178,9 @@ class GeneratorPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     var pair = appState.current;
+    if(!appState.history.contains(pair)) {
+      appState.addCurrentToHistory();
+    }
 
     IconData icon;
     if (appState.favorites.contains(pair)) {
