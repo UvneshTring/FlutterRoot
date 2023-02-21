@@ -189,25 +189,36 @@ class GeneratorPage extends StatelessWidget {
       icon = Icons.favorite_border;
     }
 
+    final ScrollController controller = ScrollController();
+    void scrollDown() {
+      controller.animateTo(
+        controller.position.maxScrollExtent,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.fastOutSlowIn,
+      );
+    }
+
     return Center(
       child: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Expanded(
-              child: ListView(
-                children: [
-                  for (var element in appState.history)
-                    ListTile(
-                      leading: appState.favorites.contains(element) ? Icon(Icons.favorite) : SizedBox(),
-                      iconColor: Theme.of(context).primaryColor,
-                      title: Text(element.asPascalCase),
-                      textColor: Colors.teal,
-                      onTap: (){
-                        appState.toggleFavorite(element);
-                      },
-                    ),
-                ],
+              child: ListView.builder(
+                controller: controller,
+                itemBuilder: (context, position) {
+                  var element = appState.history[position];
+                  return ListTile(
+                    leading: appState.favorites.contains(element) ? Icon(Icons.favorite) : SizedBox(),
+                    iconColor: Theme.of(context).primaryColor,
+                    title: Text(element.asPascalCase),
+                    textColor: Colors.teal,
+                    onTap: (){
+                      appState.toggleFavorite(element);
+                    },
+                  );
+                },
+                itemCount: appState.history.length,
               ),
             ),
             Column(
@@ -228,6 +239,7 @@ class GeneratorPage extends StatelessWidget {
                     ElevatedButton(
                         onPressed: () {
                           appState.getNext();
+                          scrollDown();
                         },
                         child: Text('Next')),
                   ],
@@ -255,16 +267,19 @@ class FavouritesPage extends StatelessWidget {
     }
 
     return Center(
-      child: ListView(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Text(
-                'You have ${appState.favorites.length} favorites:',
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: Colors.white)),
-            ),
-          for (var element in pair)
-            ListTile(
+      child: ListView.builder(
+        itemBuilder: (context, position) {
+          if(position == 0) {
+            return Padding(
+              padding: const EdgeInsets.all(20),
+              child: Text(
+                  'You have ${appState.favorites.length} favorites:',
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: Colors.white)),
+            );
+          }
+          else {
+            var element = pair[position-1];
+            return ListTile(
               leading: Icon(Icons.favorite),
               iconColor: Theme.of(context).primaryColor,
               title: Text(element.asPascalCase),
@@ -272,9 +287,11 @@ class FavouritesPage extends StatelessWidget {
               onTap: (){
                 appState.removeFavourite(element);
               },
-            )
-        ],
-      )
+            );
+          }
+        },
+        itemCount: pair.length + 1,
+      ),
     );
   }
 }
