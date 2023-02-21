@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
           // useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         ),
-        home: MyHomePage(),
+        home: const MyHomePage(),
         debugShowCheckedModeBanner: false,
       ),
     );
@@ -60,50 +60,47 @@ class MyAppState extends ChangeNotifier {
 }
 
 class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   var selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-
     Widget page;
     switch (selectedIndex) {
       case 0:
-        page = GeneratorPage();
+        page = const GeneratorPage();
         break;
       case 1:
-        page = FavouritesPage();
+        page = const FavouritesPage();
         break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
     }
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return WillPopScope(
-          onWillPop: () async {
-            if(selectedIndex == 1) {
-              setState(() {
-                selectedIndex = 0;
-              });
-              return false;
-            }
-            else {
-              return true;
-            }
-          },
-          child: Scaffold(
-            appBar: AppBar(
-              title: Text('Flutter'),
-            ),
-            body: constraints.maxWidth < 500
-              ?
-                Column(
+    return LayoutBuilder(builder: (context, constraints) {
+      return WillPopScope(
+        onWillPop: () async {
+          if (selectedIndex == 1) {
+            setState(() {
+              selectedIndex = 0;
+            });
+            return false;
+          } else {
+            return true;
+          }
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text('Flutter'),
+          ),
+          body: constraints.maxWidth < 500
+              ? Column(
                   children: [
                     Expanded(
                       child: Container(
@@ -113,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     SafeArea(
                       child: BottomNavigationBar(
-                        items: [
+                        items: const [
                           BottomNavigationBarItem(
                             icon: Icon(Icons.home),
                             label: 'Home',
@@ -133,14 +130,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     )
                   ],
                 )
-            :
-                Row(
+              : Row(
                   children: [
                     SafeArea(
                       child: NavigationRail(
-                        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                        backgroundColor:
+                            Theme.of(context).colorScheme.primaryContainer,
                         extended: constraints.maxWidth >= 600,
-                        destinations: [
+                        destinations: const [
                           NavigationRailDestination(
                             icon: Icon(Icons.home),
                             label: Text('Home'),
@@ -166,19 +163,20 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ],
                 ),
-          ),
-        );
-      }
-    );
+        ),
+      );
+    });
   }
 }
 
 class GeneratorPage extends StatelessWidget {
+  const GeneratorPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     var pair = appState.current;
-    if(!appState.history.contains(pair)) {
+    if (!appState.history.contains(pair)) {
       appState.addCurrentToHistory();
     }
 
@@ -193,7 +191,7 @@ class GeneratorPage extends StatelessWidget {
     void scrollDown() {
       controller.animateTo(
         controller.position.maxScrollExtent,
-        duration: Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 300),
         curve: Curves.fastOutSlowIn,
       );
     }
@@ -209,11 +207,13 @@ class GeneratorPage extends StatelessWidget {
                 itemBuilder: (context, position) {
                   var element = appState.history[position];
                   return ListTile(
-                    leading: appState.favorites.contains(element) ? Icon(Icons.favorite) : SizedBox(),
+                    leading: appState.favorites.contains(element)
+                        ? const Icon(Icons.favorite)
+                        : const SizedBox(),
                     iconColor: Theme.of(context).primaryColor,
                     title: Text(element.asPascalCase),
                     textColor: Colors.teal,
-                    onTap: (){
+                    onTap: () {
                       appState.toggleFavorite(element);
                     },
                   );
@@ -223,9 +223,9 @@ class GeneratorPage extends StatelessWidget {
             ),
             Column(
               children: [
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 BigCard(pair: pair),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -234,17 +234,17 @@ class GeneratorPage extends StatelessWidget {
                           appState.toggleFavorite();
                         },
                         icon: Icon(icon),
-                        label: Text('Like')),
-                    SizedBox(width: 10),
+                        label: const Text('Like')),
+                    const SizedBox(width: 10),
                     ElevatedButton(
                         onPressed: () {
                           appState.getNext();
                           scrollDown();
                         },
-                        child: Text('Next')),
+                        child: const Text('Next')),
                   ],
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
               ],
             )
           ],
@@ -255,6 +255,8 @@ class GeneratorPage extends StatelessWidget {
 }
 
 class FavouritesPage extends StatelessWidget {
+  const FavouritesPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
@@ -262,29 +264,34 @@ class FavouritesPage extends StatelessWidget {
 
     if (pair.isEmpty) {
       return Center(
-        child: Text('No favorites yet', style: Theme.of(context).textTheme.displaySmall?.copyWith(color: Colors.white)),
+        child: Text('No favorites yet',
+            style: Theme.of(context)
+                .textTheme
+                .displaySmall
+                ?.copyWith(color: Colors.white)),
       );
     }
 
     return Center(
       child: ListView.builder(
         itemBuilder: (context, position) {
-          if(position == 0) {
+          if (position == 0) {
             return Padding(
               padding: const EdgeInsets.all(20),
-              child: Text(
-                  'You have ${appState.favorites.length} favorites:',
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: Colors.white)),
+              child: Text('You have ${appState.favorites.length} favorites:',
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineMedium
+                      ?.copyWith(color: Colors.white)),
             );
-          }
-          else {
-            var element = pair[position-1];
+          } else {
+            var element = pair[position - 1];
             return ListTile(
-              leading: Icon(Icons.favorite),
+              leading: const Icon(Icons.favorite),
               iconColor: Theme.of(context).primaryColor,
               title: Text(element.asPascalCase),
               textColor: Colors.teal,
-              onTap: (){
+              onTap: () {
                 appState.removeFavourite(element);
               },
             );
@@ -317,11 +324,12 @@ class BigCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: AnimatedSize(
-          duration: Duration(milliseconds: 200),
+          duration: const Duration(milliseconds: 200),
           child: Text(
             pair.asLowerCase,
             style: style,
-            semanticsLabel: pair.asPascalCase, // For Accessibility - https://codelabs.developers.google.com/codelabs/flutter-codelab-first#4:~:text=visually%20impaired%20users.-,However,-%2C%20you%20might%20want
+            semanticsLabel: pair
+                .asPascalCase, // For Accessibility - https://codelabs.developers.google.com/codelabs/flutter-codelab-first#4:~:text=visually%20impaired%20users.-,However,-%2C%20you%20might%20want
           ),
         ),
       ),
