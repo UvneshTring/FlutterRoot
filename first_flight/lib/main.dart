@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Flutter',
         theme: ThemeData(
-          useMaterial3: true,
+          // useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         ),
         home: MyHomePage(),
@@ -91,9 +91,9 @@ class _MyHomePageState extends State<MyHomePage> {
     return LayoutBuilder(
       builder: (context, constraints) {
         return Scaffold(
-          // appBar: AppBar(
-          //   title: Text('Flutter'),
-          // ),
+          appBar: AppBar(
+            title: Text('Flutter'),
+          ),
           body: Row(
             children: [
               SafeArea(
@@ -149,7 +149,6 @@ class GeneratorPage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('A random STUPID idea:'),
           BigCard(pair: pair),
           SizedBox(height: 10),
           Row(
