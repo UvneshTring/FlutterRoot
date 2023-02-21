@@ -101,38 +101,71 @@ class _MyHomePageState extends State<MyHomePage> {
             appBar: AppBar(
               title: Text('Flutter'),
             ),
-            body: Row(
-              children: [
-                SafeArea(
-                  child: NavigationRail(
-                    backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                    extended: constraints.maxWidth >= 600,
-                    destinations: [
-                      NavigationRailDestination(
-                        icon: Icon(Icons.home),
-                        label: Text('Home'),
+            body: constraints.maxWidth < 500
+              ?
+                Column(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                        child: page,
                       ),
-                      NavigationRailDestination(
-                        icon: Icon(Icons.favorite),
-                        label: Text('Favorites'),
+                    ),
+                    SafeArea(
+                      child: BottomNavigationBar(
+                        items: [
+                          BottomNavigationBarItem(
+                            icon: Icon(Icons.home),
+                            label: 'Home',
+                          ),
+                          BottomNavigationBarItem(
+                            icon: Icon(Icons.favorite),
+                            label: 'Favorites',
+                          ),
+                        ],
+                        currentIndex: selectedIndex,
+                        onTap: (value) {
+                          setState(() {
+                            selectedIndex = value;
+                          });
+                        },
                       ),
-                    ],
-                    selectedIndex: selectedIndex,
-                    onDestinationSelected: (value) {
-                      setState(() {
-                        selectedIndex = value;
-                      });
-                    },
-                  ),
+                    )
+                  ],
+                )
+            :
+                Row(
+                  children: [
+                    SafeArea(
+                      child: NavigationRail(
+                        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                        extended: constraints.maxWidth >= 600,
+                        destinations: [
+                          NavigationRailDestination(
+                            icon: Icon(Icons.home),
+                            label: Text('Home'),
+                          ),
+                          NavigationRailDestination(
+                            icon: Icon(Icons.favorite),
+                            label: Text('Favorites'),
+                          ),
+                        ],
+                        selectedIndex: selectedIndex,
+                        onDestinationSelected: (value) {
+                          setState(() {
+                            selectedIndex = value;
+                          });
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                        child: page,
+                      ),
+                    ),
+                  ],
                 ),
-                Expanded(
-                  child: Container(
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    child: page,
-                  ),
-                ),
-              ],
-            ),
           ),
         );
       }
