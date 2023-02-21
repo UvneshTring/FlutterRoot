@@ -190,39 +190,53 @@ class GeneratorPage extends StatelessWidget {
     }
 
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          for (var element in appState.history)
-            ListTile(
-              leading: appState.favorites.contains(element) ? Icon(Icons.favorite) : SizedBox(),
-              iconColor: Theme.of(context).primaryColor,
-              title: Text(element.asPascalCase),
-              textColor: Colors.teal,
-              onTap: (){
-                appState.toggleFavorite(element);
-              },
+      child: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Expanded(
+              child: ListView(
+                children: [
+                  for (var element in appState.history)
+                    ListTile(
+                      leading: appState.favorites.contains(element) ? Icon(Icons.favorite) : SizedBox(),
+                      iconColor: Theme.of(context).primaryColor,
+                      title: Text(element.asPascalCase),
+                      textColor: Colors.teal,
+                      onTap: (){
+                        appState.toggleFavorite(element);
+                      },
+                    ),
+                ],
+              ),
             ),
-          BigCard(pair: pair),
-          SizedBox(height: 10),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ElevatedButton.icon(
-                  onPressed: () {
-                    appState.toggleFavorite();
-                  },
-                  icon: Icon(icon),
-                  label: Text('Like')),
-              SizedBox(width: 10),
-              ElevatedButton(
-                  onPressed: () {
-                    appState.getNext();
-                  },
-                  child: Text('Next')),
-            ],
-          )
-        ],
+            Column(
+              children: [
+                SizedBox(height: 10),
+                BigCard(pair: pair),
+                SizedBox(height: 10),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ElevatedButton.icon(
+                        onPressed: () {
+                          appState.toggleFavorite();
+                        },
+                        icon: Icon(icon),
+                        label: Text('Like')),
+                    SizedBox(width: 10),
+                    ElevatedButton(
+                        onPressed: () {
+                          appState.getNext();
+                        },
+                        child: Text('Next')),
+                  ],
+                ),
+                SizedBox(height: 10),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
