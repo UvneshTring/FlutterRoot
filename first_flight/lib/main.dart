@@ -74,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Widget page;
     switch (selectedIndex) {
       case 0:
-        page = const GeneratorPage();
+        page = GeneratorPage();
         break;
       case 1:
         page = const FavouritesPage();
@@ -167,8 +167,29 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
+// ignore: must_be_immutable
 class GeneratorPage extends StatelessWidget {
-  const GeneratorPage({super.key});
+  GeneratorPage({super.key});
+
+  var needsScrolling = false;
+  final ScrollController controller = ScrollController();
+
+  void scrollDown() async {
+    if (controller.hasClients) {
+      var maxScroll = controller.position.maxScrollExtent;
+      controller
+          .animateTo(
+            maxScroll,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.fastOutSlowIn,
+          )
+          .whenComplete(() => {
+                // https://smarx.com/posts/2020/08/automatic-scroll-to-bottom-in-flutter/#:~:text=Warning%3A%20a%20bug%20I%20couldn%E2%80%99t%20fix
+                if (maxScroll != controller.position.maxScrollExtent)
+                  {scrollDown()}
+              });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -185,13 +206,15 @@ class GeneratorPage extends StatelessWidget {
       icon = Icons.favorite_border;
     }
 
-    final ScrollController controller = ScrollController();
-    void scrollDown() {
-      controller.animateTo(
-        controller.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.fastOutSlowIn,
-      );
+    // This method is called everytime list is updated.
+    // So need to restrict it only when item is added to the list
+    // or when like button is pressed
+    // https://smarx.com/posts/2020/08/automatic-scroll-to-bottom-in-flutter/#:~:text=Waiting%20until%20the%20rebuild
+    if (needsScrolling) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        scrollDown();
+        needsScrolling = false;
+      });
     }
 
     return Center(
@@ -230,6 +253,7 @@ class GeneratorPage extends StatelessWidget {
                     ElevatedButton.icon(
                       onPressed: () {
                         appState.toggleFavorite();
+                        needsScrolling = true;
                       },
                       icon: Icon(icon),
                       label: const Text('Like'),
@@ -238,7 +262,7 @@ class GeneratorPage extends StatelessWidget {
                     ElevatedButton(
                       onPressed: () {
                         appState.getNext();
-                        scrollDown();
+                        needsScrolling = true;
                       },
                       child: const Text('Next'),
                     ),
