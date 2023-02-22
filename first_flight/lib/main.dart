@@ -108,25 +108,23 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: page,
                       ),
                     ),
-                    SafeArea(
-                      child: BottomNavigationBar(
-                        items: const [
-                          BottomNavigationBarItem(
-                            icon: Icon(Icons.home),
-                            label: 'Home',
-                          ),
-                          BottomNavigationBarItem(
-                            icon: Icon(Icons.favorite),
-                            label: 'Favorites',
-                          ),
-                        ],
-                        currentIndex: selectedIndex,
-                        onTap: (value) {
-                          setState(() {
-                            selectedIndex = value;
-                          });
-                        },
-                      ),
+                    BottomNavigationBar(
+                      items: const [
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.home),
+                          label: 'Home',
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.favorite),
+                          label: 'Favorites',
+                        ),
+                      ],
+                      currentIndex: selectedIndex,
+                      onTap: (value) {
+                        setState(() {
+                          selectedIndex = value;
+                        });
+                      },
                     )
                   ],
                 )
