@@ -228,23 +228,25 @@ class GeneratorPage extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     ElevatedButton.icon(
-                        onPressed: () {
-                          appState.toggleFavorite();
-                        },
-                        icon: Icon(icon),
-                        label: const Text('Like')),
+                      onPressed: () {
+                        appState.toggleFavorite();
+                      },
+                      icon: Icon(icon),
+                      label: const Text('Like'),
+                    ),
                     const SizedBox(width: 10),
                     ElevatedButton(
-                        onPressed: () {
-                          appState.getNext();
-                          scrollDown();
-                        },
-                        child: const Text('Next')),
+                      onPressed: () {
+                        appState.getNext();
+                        scrollDown();
+                      },
+                      child: const Text('Next'),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 10),
               ],
-            )
+            ),
           ],
         ),
       ),
@@ -326,8 +328,8 @@ class BigCard extends StatelessWidget {
           child: Text(
             pair.asLowerCase,
             style: style,
-            semanticsLabel: pair
-                .asPascalCase, // For Accessibility - https://codelabs.developers.google.com/codelabs/flutter-codelab-first#4:~:text=visually%20impaired%20users.-,However,-%2C%20you%20might%20want
+            semanticsLabel: pair.asPascalCase,
+            // For Accessibility - https://codelabs.developers.google.com/codelabs/flutter-codelab-first#4:~:text=visually%20impaired%20users.-,However,-%2C%20you%20might%20want
           ),
         ),
       ),
